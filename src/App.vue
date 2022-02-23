@@ -68,25 +68,8 @@ function draw() {
 }
 
 function save() {
-  _show.value = false;
-  let wm = name.value;
-  let canvas = <HTMLCanvasElement>document.createElement('canvas');
-  let ctx = canvas.getContext('2d');
-  let imgref = <HTMLImageElement>document.getElementById("yqhimg");
-  canvas.width = imgref.width;//设置canvas容器宽度
-  canvas.height = imgref.height;//设置canvas容器高度
-  let clientheight = document.documentElement.clientHeight;
-  let b = clientheight / 2208;
-  ctx.drawImage(imgref, 0, 0);
-  //console.log(fontsize.value / b);
-  let temp = 'bold ' + Math.ceil(fontsize.value / b) + 'px Arial'
-  console.log(temp);
-  ctx.font = temp;
-  let text = ctx.measureText(wm);
-  let start_w = b_w * imgref.width - text.width / 2;
-  let start_h = b_h * imgref.height;
-  ctx.fillText(wm, start_w, start_h);
-
+  
+  let canvas = <HTMLCanvasElement> document.getElementById('mycanvas');
   let dataURL = canvas.toDataURL('image/png', 100);
   //let img = document.createElement('img');
   //img.src = dataURL;
