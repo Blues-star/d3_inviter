@@ -5,9 +5,11 @@ import { ref, nextTick } from 'vue';
 import { onMounted, onUpdated, onActivated } from 'vue';
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 
-const b_h = 0.493;
+const b_h = 0.50;
 const b_w = 0.50;
-const fontsize = ref(30);
+const img_w = 1240;
+const img_h = 2208;
+const fontsize = ref(140);
 const oriw = ref(0)
 const orih = ref(0)
 const ImgRef = ref(null)
@@ -17,28 +19,52 @@ let heightsize = ref(0);
 let widthsize = ref(0);
 let name = ref('');
 let _show = ref(false);
+
+const v_can = <HTMLCanvasElement> document.createElement('canvas');
+
+v_can.height = img_h;
+v_can.width = img_w;
+
 function draw() {
   let wm = name.value;
   let imgref = <HTMLImageElement>document.getElementById("yqhimg");
-  let canvas = <HTMLCanvasElement>document.getElementById('mycanvas');
+  let v_ctx = v_can.getContext('2d');
+  let b = document.documentElement.clientHeight / 2208;
+
+  v_ctx.drawImage(imgref, 0, 0);
+  //_show.value = false;
+  v_ctx.font = 'bold ' + fontsize.value + 'px Arial';
+  v_ctx.textAlign = 'center';
+  let text = v_ctx.measureText(wm);
+  let start_w = b_w * img_w;
+  let start_h = b_h * img_h;
+
+  console.log(start_w, start_h);
+
+  v_ctx.fillText(wm, start_w, start_h);
+
+
+
+  let dataURL = v_can.toDataURL('image/png', 100);
+
+  let canvas = <HTMLCanvasElement> document.getElementById('mycanvas');
   let ctx = canvas.getContext('2d');
-  ctx.textAlign = 'center';
+
+
+  
   let clientheight = document.documentElement.clientHeight;
   console.log(imgref.width, imgref.height);
-  let b = clientheight / 2208;
-  let curw = b * imgref.width;
+  //let b = clientheight / 2208;
+  let curw = b * img_w;
   let curh = clientheight;
-  canvas.width = imgref.width;//设置canvas容器宽度
-  canvas.height = imgref.height;//设置canvas容器高度
+  canvas.width = curw;//设置canvas容器宽度
+  canvas.height = curh;
 
-  ctx.drawImage(imgref, 0, 0, curw, curh);
-  //_show.value = false;
-  ctx.font = 'bold ' + fontsize.value + 'px Arial';
-  let text = ctx.measureText(wm);
-  let start_w = b_w * curw - text.width / 2;
-  let start_h = b_h * curh;
+  let t = new Image();
+  t.src = dataURL;
 
-  ctx.fillText(wm, start_w, start_h);
+  ctx = canvas.getContext('2d');
+  ctx.drawImage(t, 0, 0, curw, curh)
 }
 
 function save() {
@@ -88,10 +114,7 @@ function save() {
           <n-input size="large" v-model:value="name" @input="draw" round placeholder="战队名称" />
         </n-layout>
         <n-layout>
-          <n-input-number
-            v-model:value="fontsize"
-            @update:value="draw"
-          />
+          <n-input-number v-model:value="fontsize" @update:value="draw" />
         </n-layout>
         <n-layout style="height: 42px;">
           <n-space>
